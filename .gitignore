@@ -348,3 +348,8 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+dotnet/App.Container/SenseHat/modules/SenseHat/libRTIMULib.so.7
+*.so
+dotnet/App/libRTIMULib.so.7
+dotnet/App/RTIMULib.ini
+dotnet/Container/App/libRTIMULib.so.7
