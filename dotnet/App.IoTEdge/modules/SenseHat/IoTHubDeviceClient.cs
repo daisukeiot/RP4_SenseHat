@@ -1,5 +1,6 @@
 using Microsoft.Azure.Devices.Client;
 using Microsoft.Azure.Devices.Shared;
+using Microsoft.Azure.Devices.Client.Transport.Mqtt;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,17 +18,33 @@ namespace RP4SenseHat.csharp
         // 3. Reads sensor data from SenseHat
         // 4. Sends telemetry to IoT Hub/IoT Central
         //
-        IAuthenticationMethod _authenticationMethod;
-        DeviceClient _deviceClient;
-        bool _bCelcius = true;
-        bool _isPi = true;
+      
+        //https://docs.microsoft.com/en-us/dotnet/api/microsoft.azure.devices.client.deviceclient?view=azure-dotnet
+        private DeviceClient _client;
+
+        private IAuthenticationMethod _authenticationMethod;
+        private string _iotHub;
+        private bool _bCelcius = true;
+        private bool _isPi = true;
 
         public IoTHubDeviceClient(string iothub, IAuthenticationMethod authenticationMethod)
         {
-            _authenticationMethod = authenticationMethod ?? throw new ArgumentNullException(nameof(authenticationMethod)); ;
-            _deviceClient = DeviceClient.Create(iothub, _authenticationMethod, TransportType.Mqtt);
-            _deviceClient.ProductInfo = "RaspberryPiSample";
+            _iotHub = iothub;
+            _authenticationMethod = authenticationMethod;
             _bCelcius = true;
+        }
+
+        public async Task Initialize()
+        {
+            MqttTransportSettings mqttSetting = new MqttTransportSettings(TransportType.Mqtt)
+            {
+                //CleanSession = true,
+                // set proxy etc
+            };
+            ITransportSettings[] settings = { mqttSetting };
+            _client = DeviceClient.Create(_iotHub, _authenticationMethod, settings);
+            _client.ProductInfo = "IoTHubClientSample";
+            await _client.OpenAsync();
         }
 
         public async Task Run()
@@ -35,15 +52,15 @@ namespace RP4SenseHat.csharp
             // runs loop to send telemetry
 
             // set up a callback for connection status change
-            _deviceClient.SetConnectionStatusChangesHandler(ConnectionStatusChangeHandler);
+            _client.SetConnectionStatusChangesHandler(ConnectionStatusChangeHandler);
 
             // set up callback for Desired Property update (Settings/Properties in IoT Central)
-            await _deviceClient.SetDesiredPropertyUpdateCallbackAsync(OnDesiredPropertyChangedAsync, null).ConfigureAwait(false);
+            await _client.SetDesiredPropertyUpdateCallbackAsync(OnDesiredPropertyChangedAsync, null).ConfigureAwait(false);
 
             // set up callback for Methond (Command in IoT Central)
-            await _deviceClient.SetMethodHandlerAsync("displayMessage", DisplayMessage, null).ConfigureAwait(false);
+            await _client.SetMethodHandlerAsync("displayMessage", DisplayMessage, null).ConfigureAwait(false);
 
-            Twin twin = await _deviceClient.GetTwinAsync().ConfigureAwait(false);
+            Twin twin = await _client.GetTwinAsync().ConfigureAwait(false);
             Console.WriteLine("\r\nDevice Twin received:");
             Console.WriteLine($"{twin.ToJson(Newtonsoft.Json.Formatting.Indented)}");
 
@@ -81,7 +98,7 @@ namespace RP4SenseHat.csharp
                             using (var eventMessage = new Message(Encoding.UTF8.GetBytes(buffer)))
                             {
                                 Console.WriteLine(buffer);
-                                await _deviceClient.SendEventAsync(eventMessage).ConfigureAwait(false);
+                                await _client.SendEventAsync(eventMessage).ConfigureAwait(false);
                             }
                         }
                         else
@@ -102,6 +119,15 @@ namespace RP4SenseHat.csharp
             }
         }
 
+        private void ConnectionStatusChangeHandler(ConnectionStatus status, ConnectionStatusChangeReason reason)
+        {
+            // callback when connection to IoT Hub/IoT Central changed
+            Console.WriteLine();
+            Console.WriteLine($"Connection status changed to {status}.");
+            Console.WriteLine($"Connection status changed reason is {reason}.");
+            Console.WriteLine();
+        }
+        
         private Task<MethodResponse> DisplayMessage(MethodRequest methodRequest, object userContext)
         {
             // callback when a command is sent from cloud
@@ -113,15 +139,6 @@ namespace RP4SenseHat.csharp
 
             // return response to IoT Hub/IoT Central
             return Task.FromResult(new MethodResponse(new byte[0], 200));
-        }
-
-        private void ConnectionStatusChangeHandler(ConnectionStatus status, ConnectionStatusChangeReason reason)
-        {
-            // callback when connection to IoT Hub/IoT Central changed
-            Console.WriteLine();
-            Console.WriteLine($"Connection status changed to {status}.");
-            Console.WriteLine($"Connection status changed reason is {reason}.");
-            Console.WriteLine();
         }
 
         private async Task OnDesiredPropertyChangedAsync(TwinCollection desiredProperties, object userContext)
@@ -143,7 +160,7 @@ namespace RP4SenseHat.csharp
             TwinCollection reportedProperties = new TwinCollection();
             reportedProperties["isCelcius"] = twinValue;
 
-            await _deviceClient.UpdateReportedPropertiesAsync(reportedProperties).ConfigureAwait(false);
+            await _client.UpdateReportedPropertiesAsync(reportedProperties).ConfigureAwait(false);
         }
     }
 }

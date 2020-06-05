@@ -20,16 +20,14 @@ namespace RP4SenseHat.csharp
     public class DPSClient
     {
         private const string s_global_endpoint = "global.azure-devices-provisioning.net";
-        private static string _idScope;
-        private static string _sasKey;
+        private static string s_idScope = Environment.GetEnvironmentVariable("DPS_IDSCOPE");
+        private static string s_sasKey  = Environment.GetEnvironmentVariable("SAS_KEY");
         private static string _deviceId;
         private ProvisioningDeviceClient _provClient;
 
-        public DPSClient(string s_deviceId, string s_idScope, string s_sasKey)
+        public DPSClient(string s_deviceId)
         {
             _deviceId = s_deviceId;
-            _idScope = s_idScope;
-            _sasKey = s_sasKey;
             _provClient = null;
         }
 
@@ -40,7 +38,7 @@ namespace RP4SenseHat.csharp
 
             Console.WriteLine("Provisioning...");
 
-            if (!String.IsNullOrEmpty(_deviceId) && !String.IsNullOrEmpty(_sasKey))
+            if (!String.IsNullOrEmpty(_deviceId) && !String.IsNullOrEmpty(s_sasKey) && !String.IsNullOrEmpty(s_idScope))
             {
                 connectionKey = GenerateSymmetricKey();
                 Console.WriteLine($"Connection Key : {connectionKey}");
@@ -48,7 +46,7 @@ namespace RP4SenseHat.csharp
                 using (var securityProvider = new SecurityProviderSymmetricKey(_deviceId, connectionKey, null))
                 using (var transport = new ProvisioningTransportHandlerMqtt(TransportFallbackType.TcpOnly))
                 {
-                    _provClient = ProvisioningDeviceClient.Create(s_global_endpoint, _idScope, securityProvider, transport);
+                    _provClient = ProvisioningDeviceClient.Create(s_global_endpoint, s_idScope, securityProvider, transport);
 
                     // Sanity check
                     Console.WriteLine($"Device ID      : {securityProvider.GetRegistrationID()}");
@@ -70,6 +68,10 @@ namespace RP4SenseHat.csharp
                         Console.WriteLine($"Err : Provisioning Failed {result.Status}");
                     }
                 }
+            } else {
+                Console.WriteLine("Please set following Environment Variables");
+                Console.WriteLine("DPS_IDSCOPE : ID Scope");
+                Console.WriteLine("SAS_KEY     : SAS Key");
             }
 
             return iotHubClient;
@@ -80,7 +82,7 @@ namespace RP4SenseHat.csharp
         //
         private static string GenerateSymmetricKey()
         {
-            using (var hmac = new HMACSHA256(Convert.FromBase64String(_sasKey)))
+            using (var hmac = new HMACSHA256(Convert.FromBase64String(s_sasKey)))
             {
                 return Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(_deviceId)));
             }

@@ -28,7 +28,7 @@
       "name": "SenseHat Local Debug (.NET Core)",
       "type": "coreclr",
       "request": "launch",
-      "program": "${workspaceRoot}/modules/SenseHat/bin/Debug/netcoreapp2.1/SenseHat.dll",
+      "program": "${workspaceRoot}/modules/SenseHat/bin/Debug/netcoreapp3.1/SenseHat.dll",
       "args": [],
       "cwd": "${workspaceRoot}/modules/SenseHat",
       "internalConsoleOptions": "openOnSessionStart",
