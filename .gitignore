@@ -353,3 +353,4 @@ dotnet/App.Container/SenseHat/modules/SenseHat/libRTIMULib.so.7
 dotnet/App/libRTIMULib.so.7
 dotnet/App/RTIMULib.ini
 dotnet/Container/App/libRTIMULib.so.7
+dotnet/App.Container/SenseHat/modules/SenseHat/RTIMULib.ini
