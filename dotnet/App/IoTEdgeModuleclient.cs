@@ -10,40 +10,36 @@ using Newtonsoft.Json;
 
 namespace RP4SenseHat.csharp
 {
-    public class IoTHubDeviceClient
+    public class IoTEdgeModuleClient
     {
-        // A wrapper for Azure Device Client class.
+        // A wrapper for Azure IoT Edge Module Client class.
         // 1. Connects to IoT Hub/IoT Central using authentication information from DPS
         // 2. Set up callback functions for connection status change, Desired Property change (Settings from Cloud), and commands
         // 3. Reads sensor data from SenseHat
         // 4. Sends telemetry to IoT Hub/IoT Central
         //
-      
-        //https://docs.microsoft.com/en-us/dotnet/api/microsoft.azure.devices.client.deviceclient?view=azure-dotnet
-        private DeviceClient _client;
-
-        private IAuthenticationMethod _authenticationMethod;
-        private string _iotHub;
+        // https://docs.microsoft.com/en-us/dotnet/api/microsoft.azure.devices.client.moduleclient?view=azure-dotnet
+        private ModuleClient _client;
+        private static TransportType s_transportType = TransportType.Amqp;
         private bool _bCelcius = true;
         private bool _isPi = true;
 
-        public IoTHubDeviceClient(string iothub, IAuthenticationMethod authenticationMethod)
+        public IoTEdgeModuleClient()
         {
-            _iotHub = iothub;
-            _authenticationMethod = authenticationMethod;
+            Console.WriteLine("IoT Hub module client initialized.");
             _bCelcius = true;
         }
 
         public async Task Initialize()
         {
-            MqttTransportSettings mqttSetting = new MqttTransportSettings(TransportType.Mqtt)
+            MqttTransportSettings mqttSetting = new MqttTransportSettings(TransportType.Mqtt_Tcp_Only)  // must be Mqtt_WebSocket_Only or Mqtt_Tcp_Only
             {
                 //CleanSession = true,
                 // set proxy etc
             };
             ITransportSettings[] settings = { mqttSetting };
-            _client = DeviceClient.Create(_iotHub, _authenticationMethod, settings);
-            _client.ProductInfo = "IoTHubClientSample";
+            _client = await ModuleClient.CreateFromEnvironmentAsync(settings);
+            _client.ProductInfo = "IoTEdgeModuleSample";
             await _client.OpenAsync();
         }
 
@@ -64,9 +60,9 @@ namespace RP4SenseHat.csharp
             Console.WriteLine("\r\nDevice Twin received:");
             Console.WriteLine($"{twin.ToJson(Newtonsoft.Json.Formatting.Indented)}");
 
-            if (twin.Properties.Desired.Contains("isCelsius"))
+            if (twin.Properties.Desired.Contains("isCelcius"))
             {
-                _bCelsius = twin.Properties.Desired["isCelsius"]["value"];
+                _bCelcius = twin.Properties.Desired["isCelcius"]["value"];
             }
 
             if (_isPi)
@@ -86,7 +82,7 @@ namespace RP4SenseHat.csharp
                         {
                             string buffer;
                             // format telemetry based on settings from Cloud
-                            if (_bCelsius)
+                            if (_bCelcius)
                             {
                                 buffer = $"{{\"humidity\":{humidityReadResult.Humidity:F2},\"tempC\":{humidityReadResult.Temperatur:F2}}}";
                             } else
@@ -98,7 +94,7 @@ namespace RP4SenseHat.csharp
                             using (var eventMessage = new Message(Encoding.UTF8.GetBytes(buffer)))
                             {
                                 Console.WriteLine(buffer);
-                                await _client.SendEventAsync(eventMessage).ConfigureAwait(false);
+                                await _client.SendEventAsync("SensorsOutput", eventMessage).ConfigureAwait(false);
                             }
                         }
                         else
@@ -149,16 +145,16 @@ namespace RP4SenseHat.csharp
 
 
             // IoT Central expects the following payloads in Reported Property (as a response and communicate synchronization status) 
-            _bCelsius = desiredProperties["isCelsius"]["value"];
+            _bCelcius = desiredProperties["isCelcius"]["value"];
 
             TwinCollection twinValue = new TwinCollection();
-            twinValue["value"] = _bCelsius;
+            twinValue["value"] = _bCelcius;
             twinValue["desiredVersion"] = desiredProperties["$version"];
             twinValue["statusCode"] = 200;
             twinValue["status"] = "completed";
 
             TwinCollection reportedProperties = new TwinCollection();
-            reportedProperties["isCelsius"] = twinValue;
+            reportedProperties["isCelcius"] = twinValue;
 
             await _client.UpdateReportedPropertiesAsync(reportedProperties).ConfigureAwait(false);
         }
