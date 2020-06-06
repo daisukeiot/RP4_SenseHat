@@ -1,0 +1,52 @@
+FROM debian as sensehat-build
+
+RUN	apt-get update && \
+    apt-get install -y git cmake
+
+ENV CXX=arm-linux-gnueabihf-g++
+
+WORKDIR /opt
+
+# compile library for SenseHat
+RUN git clone https://github.com/raspberrypi/tools.git && \
+    ln -sf /opt/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/bin/* /usr/local/bin/
+
+RUN	git clone https://github.com/johannesegger/SenseHatNet.git && \
+    cd ./SenseHatNet && \
+    git clone https://github.com/RPi-Distro/RTIMULib.git
+
+WORKDIR /opt/SenseHatNet/build
+
+RUN cmake ../RTIMULibWrapper && \
+    make -j4
+
+# =================================================================
+
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS dotnet-build
+
+# RUN wget https://download.visualstudio.microsoft.com/download/pr/f2e1cb4a-0c70-49b6-871c-ebdea5ebf09d/acb1ea0c0dbaface9e19796083fe1a6b/dotnet-sdk-3.1.300-linux-arm.tar.gz && \
+#     mkdir -p /dotnet && \
+#     tar zxf dotnet-sdk-3.1.300-linux-arm.tar.gz -C /dotnet
+
+# ENV DOTNET_ROOT=/dotnet
+# ENV PATH=$PATH:/dotnet
+
+WORKDIR /app
+
+COPY *.csproj ./
+RUN dotnet restore -r linux-arm
+
+COPY . ./
+RUN dotnet publish -c release -o out -r linux-arm --self-contained false --no-restore
+
+# =================================================================
+
+FROM mcr.microsoft.com/dotnet/core/runtime:3.1-buster-slim-arm32v7
+WORKDIR /app
+COPY --from=sensehat-build /opt/SenseHatNet/build ./
+COPY --from=dotnet-build /app/out ./
+
+# RUN useradd -ms /bin/bash moduleuser
+# USER moduleuser
+
+ENTRYPOINT ["dotnet", "./RP4SenseHat.csharp.dll"]
