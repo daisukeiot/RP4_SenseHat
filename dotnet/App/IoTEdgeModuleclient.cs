@@ -174,8 +174,10 @@ namespace RP4SenseHat.csharp
             Console.WriteLine("{0}", methodRequest.DataAsJson);
 
             // display on SenseHat LED
-            Sense.Led.LedMatrix.ShowMessage(methodRequest.DataAsJson.Replace("\"", string.Empty).Trim());
-
+            if (_hasSenseHat)
+            {
+                Sense.Led.LedMatrix.ShowMessage(methodRequest.DataAsJson.Replace("\"", string.Empty).Trim());
+            }
             // return response to IoT Hub/IoT Central
             return Task.FromResult(new MethodResponse(new byte[0], 200));
         }
