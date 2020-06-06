@@ -52,7 +52,7 @@
             "status": "running",
             "restartPolicy": "always",
             "settings": {
-              "image": "daisukeiot/filtermodule:1.0.0-sim-arm32v7",
+              "image": "daisukeiot/filtermodule:1.0.0-arm32v7",
               "createOptions": "{}"
             }
           }
