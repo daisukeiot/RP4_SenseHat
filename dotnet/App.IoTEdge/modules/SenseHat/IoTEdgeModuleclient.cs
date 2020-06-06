@@ -20,13 +20,13 @@ namespace RP4SenseHat.csharp
         //
         // https://docs.microsoft.com/en-us/dotnet/api/microsoft.azure.devices.client.moduleclient?view=azure-dotnet
         private ModuleClient _client;
-        private bool _bCelcius = true;
+        private bool _bCelsius = true;
         private bool _hasSenseHat = true;
         static readonly Random Rnd = new Random();
 
         public IoTEdgeModuleClient()
         {
-            _bCelcius = true;
+            _bCelsius = true;
             Console.WriteLine($"SenseHat Module Client : Has SenseHat : {_hasSenseHat}");
         }
 
@@ -61,9 +61,9 @@ namespace RP4SenseHat.csharp
             Console.WriteLine("\r\nDevice Twin received:");
             Console.WriteLine($"{twin.ToJson(Newtonsoft.Json.Formatting.Indented)}");
 
-            if (twin.Properties.Desired.Contains("isCelcius"))
+            if (twin.Properties.Desired.Contains("isCelsius"))
             {
-                _bCelcius = twin.Properties.Desired["isCelcius"]["value"];
+                _bCelsius = twin.Properties.Desired["isCelsius"]["value"];
             }
 
             if (_hasSenseHat)
@@ -83,7 +83,7 @@ namespace RP4SenseHat.csharp
                         {
                             string buffer;
                             // format telemetry based on settings from Cloud
-                            if (_bCelcius)
+                            if (_bCelsius)
                             {
                                 buffer = $"{{\"humidity\":{humidityReadResult.Humidity:F2},\"tempC\":{humidityReadResult.Temperatur:F2}}}";
                             } else
@@ -138,7 +138,7 @@ namespace RP4SenseHat.csharp
                     }
 
                     // format telemetry based on settings from Cloud
-                    if (_bCelcius)
+                    if (_bCelsius)
                     {
                         buffer = $"{{\"humidity\":{simulatorData.Humidity:F2},\"tempC\":{simulatorData.TempC:F2}}}";
                     } else
@@ -191,16 +191,16 @@ namespace RP4SenseHat.csharp
 
 
             // IoT Central expects the following payloads in Reported Property (as a response and communicate synchronization status) 
-            _bCelcius = desiredProperties["isCelcius"]["value"];
+            _bCelsius = desiredProperties["isCelsius"]["value"];
 
             TwinCollection twinValue = new TwinCollection();
-            twinValue["value"] = _bCelcius;
+            twinValue["value"] = _bCelsius;
             twinValue["desiredVersion"] = desiredProperties["$version"];
             twinValue["statusCode"] = 200;
             twinValue["status"] = "completed";
 
             TwinCollection reportedProperties = new TwinCollection();
-            reportedProperties["isCelcius"] = twinValue;
+            reportedProperties["isCelsius"] = twinValue;
 
             await _client.UpdateReportedPropertiesAsync(reportedProperties).ConfigureAwait(false);
         }

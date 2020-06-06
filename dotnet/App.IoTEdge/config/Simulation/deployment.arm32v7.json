@@ -73,7 +73,7 @@
     },
     "SenseHat": {
       "properties.desired": {
-        "isCelcius": {
+        "isCelsius": {
           "value": true
         }
       }
