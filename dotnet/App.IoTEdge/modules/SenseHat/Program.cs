@@ -18,8 +18,8 @@ namespace RP4SenseHat.csharp
 
         public static int Main(string[] args)
         {
-           foreach (DictionaryEntry de in Environment.GetEnvironmentVariables())
-                Console.WriteLine("  {0} = {1}", de.Key, de.Value);
+        //    foreach (DictionaryEntry de in Environment.GetEnvironmentVariables())
+        //         Console.WriteLine("  {0} = {1}", de.Key, de.Value);
 
             if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER")))
             {

@@ -25,13 +25,15 @@ namespace RP4SenseHat.csharp
         private IAuthenticationMethod _authenticationMethod;
         private string _iotHub;
         private bool _bCelcius = true;
-        private bool _isPi = true;
+        private bool _hasSenseHat = false;
+        static readonly Random Rnd = new Random();
 
         public IoTHubDeviceClient(string iothub, IAuthenticationMethod authenticationMethod)
         {
             _iotHub = iothub;
             _authenticationMethod = authenticationMethod;
             _bCelcius = true;
+            Console.WriteLine($"SenseHat Device Client : Has SenseHat : {_hasSenseHat}");
         }
 
         public async Task Initialize()
@@ -69,7 +71,7 @@ namespace RP4SenseHat.csharp
                 _bCelsius = twin.Properties.Desired["isCelsius"]["value"];
             }
 
-            if (_isPi)
+            if (_hasSenseHat)
             {
                 // read sensor data from SenseHat
                 using (var settings = RTIMUSettings.CreateDefault())
@@ -95,10 +97,10 @@ namespace RP4SenseHat.csharp
                                 buffer = $"{{\"humidity\":{humidityReadResult.Humidity:F2},\"tempF\":{fahrenheit:F2}}}";
                             }
 
-                            using (var eventMessage = new Message(Encoding.UTF8.GetBytes(buffer)))
+                            using (var telemetryMessage = new Message(Encoding.UTF8.GetBytes(buffer)))
                             {
-                                Console.WriteLine(buffer);
-                                await _client.SendEventAsync(eventMessage).ConfigureAwait(false);
+                                Console.WriteLine($"Message Out : [{buffer}]");
+                                await _client.SendEventAsync(telemetryMessage).ConfigureAwait(false);
                             }
                         }
                         else
@@ -109,15 +111,56 @@ namespace RP4SenseHat.csharp
                         await Task.Delay(3 * 1000);
                     }
                 }
-            } else
-            {
-                Console.WriteLine($"CTRL+C to exit");
+            } else {
+                // simulate sensor date
+                string buffer;
+                var simulatorData = new SimulatorData
+                {
+                    TempCMax = 36,
+                    HumidityMax = 100,
+                    TempC = 30,
+                    Humidity = 40,
+                };
+
                 while (true)
                 {
+                    if (simulatorData.TempC > simulatorData.TempCMax)
+                    {
+                        simulatorData.TempC += Rnd.NextDouble() - 0.5; // add value between [-0.5..0.5]
+                    }
+                    else
+                    {
+                        simulatorData.TempC += -0.25 + (Rnd.NextDouble() * 1.5); // add value between [-0.25..1.25] - average +0.5
+                    }
+
+                    if (simulatorData.Humidity > simulatorData.HumidityMax)
+                    {
+                        simulatorData.Humidity += Rnd.NextDouble() - 0.5; // add value between [-0.5..0.5]
+                    }
+                    else
+                    {
+                        simulatorData.Humidity += -0.25 + (Rnd.NextDouble() * 1.5); // add value between [-0.25..1.25] - average +0.5
+                    }
+
+                    // format telemetry based on settings from Cloud
+                    if (_bCelcius)
+                    {
+                        buffer = $"{{\"humidity\":{simulatorData.Humidity:F2},\"tempC\":{simulatorData.TempC:F2}}}";
+                    } else
+                    {
+                        double fahrenheit = (simulatorData.TempC * 9 / 5) + 32;
+                        buffer = $"{{\"humidity\":{simulatorData.Humidity:F2},\"tempF\":{fahrenheit:F2}}}";
+                    }
+
+                    using (var telemetryMessage = new Message(Encoding.UTF8.GetBytes(buffer)))
+                    {
+                        Console.WriteLine(buffer);
+                        await _client.SendEventAsync(telemetryMessage).ConfigureAwait(false);
+                    }
+
                     await Task.Delay(3 * 1000);
                 }
-            }
-        }
+            }        }
 
         private void ConnectionStatusChangeHandler(ConnectionStatus status, ConnectionStatusChangeReason reason)
         {
@@ -161,6 +204,16 @@ namespace RP4SenseHat.csharp
             reportedProperties["isCelsius"] = twinValue;
 
             await _client.UpdateReportedPropertiesAsync(reportedProperties).ConfigureAwait(false);
+        }
+
+        internal class SimulatorData
+        {
+            public double TempCMin { get; set; }
+            public double TempCMax { get; set; }
+            public double HumidityMin { get; set; }
+            public double HumidityMax { get; set; }
+            public double TempC { get; set; }
+            public double Humidity { get; set; }
         }
     }
 }
