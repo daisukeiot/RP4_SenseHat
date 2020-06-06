@@ -66,7 +66,7 @@
               "image": "${MODULES.SenseHat}",
               "createOptions": {
                 "HostConfig": {
-                  "Privileged":true
+                  "Privileged": true
                 },
                 "Devices": [
                   {
@@ -78,9 +78,19 @@
                     "PathOnHost": "/sys/class/input",
                     "PathInContainer": "/sys/class/input",
                     "CgroupPermissions": "rwm"
-                  }                  
+                  }
                 ]
               }
+            }
+          },
+          "FilterModule": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "${MODULES.FilterModule}",
+              "createOptions": {}
             }
           }
         }
@@ -90,17 +100,18 @@
       "properties.desired": {
         "schemaVersion": "1.0",
         "routes": {
-          "SenseHatToIoTHub": "FROM /messages/modules/SenseHat/outputs/SensorsOutput INTO $upstream"
+          "SenseHatToIoTHub": "FROM /messages/modules/SenseHat/outputs/SensorsOutput INTO BrokeredEndpoint(\"/modules/FilterModule/inputs/TelemetryInput\")",
+          "FilterModuleToIoTHub": "FROM /messages/modules/FilterModule/outputs/TelemetryOutput/* INTO $upstream"
         },
         "storeAndForwardConfiguration": {
           "timeToLiveSecs": 7200
         }
       }
     },
-    "SenseHat" : {
+    "SenseHat": {
       "properties.desired": {
-        "isCelcius" : {
-          "value" : true
+        "isCelcius": {
+          "value": true
         }
       }
     }
