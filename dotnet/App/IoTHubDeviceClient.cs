@@ -25,7 +25,7 @@ namespace RP4SenseHat.csharp
         private IAuthenticationMethod _authenticationMethod;
         private string _iotHub;
         private bool _bCelcius = true;
-        private bool _hasSenseHat = false;
+        private bool _hasSenseHat = true;
         static readonly Random Rnd = new Random();
 
         public IoTHubDeviceClient(string iothub, IAuthenticationMethod authenticationMethod)
