@@ -198,9 +198,8 @@ namespace RP4SenseHat.csharp
             Console.WriteLine("\r\nDesired property (Settings) changed:");
             Console.WriteLine($"{desiredProperties.ToJson(Newtonsoft.Json.Formatting.Indented)}");
 
-
             // IoT Central expects the following payloads in Reported Property (as a response and communicate synchronization status) 
-            if (twin.Properties.Desired.Contains("isCelsius"))
+            if (desiredProperties.Contains("isCelsius"))
             {
                 _bCelsius = desiredProperties["isCelsius"];
 
