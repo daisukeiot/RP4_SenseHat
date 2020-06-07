@@ -63,7 +63,16 @@ namespace RP4SenseHat.csharp
 
             if (twin.Properties.Desired.Contains("isCelsius"))
             {
-                _bCelsius = twin.Properties.Desired["isCelsius"]["value"];
+                _bCelsius = twin.Properties.Desired["isCelsius"];
+                TwinCollection twinValue = new TwinCollection();
+                twinValue["desiredVersion"] = twin.Properties.Desired["$version"];
+                twinValue["statusCode"] = 200;
+
+                TwinCollection reportedProperties = new TwinCollection();
+                reportedProperties["isCelsius"] = twinValue;
+
+                await _client.UpdateReportedPropertiesAsync(reportedProperties).ConfigureAwait(false);
+
             }
 
             if (_hasSenseHat)
@@ -191,18 +200,24 @@ namespace RP4SenseHat.csharp
 
 
             // IoT Central expects the following payloads in Reported Property (as a response and communicate synchronization status) 
-            _bCelsius = desiredProperties["isCelsius"]["value"];
+            if (twin.Properties.Desired.Contains("isCelsius"))
+            {
+                _bCelsius = desiredProperties["isCelsius"];
 
-            TwinCollection twinValue = new TwinCollection();
-            twinValue["value"] = _bCelsius;
-            twinValue["desiredVersion"] = desiredProperties["$version"];
-            twinValue["statusCode"] = 200;
-            twinValue["status"] = "completed";
+                TwinCollection twinValue = new TwinCollection();
 
-            TwinCollection reportedProperties = new TwinCollection();
-            reportedProperties["isCelsius"] = twinValue;
+                // desiredVersion and statusCode are required for IoT Central to ack "synch state"
+                twinValue["desiredVersion"] = desiredProperties["$version"];
+                twinValue["statusCode"] = 200;
+                //twinValue["status"] = "completed";
 
-            await _client.UpdateReportedPropertiesAsync(reportedProperties).ConfigureAwait(false);
+                TwinCollection reportedProperties = new TwinCollection();
+                reportedProperties["isCelsius"] = twinValue;
+
+                // Set reported properties to inform IoT Central the synchronization state
+                Console.WriteLine($"{reportedProperties.ToJson(Newtonsoft.Json.Formatting.Indented)}");
+                await _client.UpdateReportedPropertiesAsync(reportedProperties).ConfigureAwait(false);
+            }
         }
 
         internal class SimulatorData

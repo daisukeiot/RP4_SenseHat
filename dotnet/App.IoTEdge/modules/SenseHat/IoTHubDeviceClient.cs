@@ -66,9 +66,30 @@ namespace RP4SenseHat.csharp
             Console.WriteLine("\r\nDevice Twin received:");
             Console.WriteLine($"{twin.ToJson(Newtonsoft.Json.Formatting.Indented)}");
 
-            if (twin.Properties.Desired.Contains("isCelsius"))
+            // Properties in IoT Central looks like this
+            //   "properties": {
+            //    "desired": {
+            //      "isCelsius": {
+            //        "value": true
+            //      },
+            //      "$version": 2
+            //    },
+
+            if (twin.Properties.Desired.Contains("isCelsius") && twin.Properties.Desired["isCelsius"]["value"] != null)
             {
                 _bCelsius = twin.Properties.Desired["isCelsius"]["value"];
+
+                // Synchronize setting with IoT Central
+                TwinCollection twinValue = new TwinCollection();
+                twinValue["desiredVersion"] = twin.Properties.Desired["$version"];
+                twinValue["statusCode"] = 200;
+                twinValue["value"] = _bCelsius;
+                twinValue["status"] = "completed";
+
+                TwinCollection reportedProperties = new TwinCollection();
+                reportedProperties["isCelsius"] = twinValue;
+
+                await _client.UpdateReportedPropertiesAsync(reportedProperties).ConfigureAwait(false);
             }
 
             if (_hasSenseHat)
