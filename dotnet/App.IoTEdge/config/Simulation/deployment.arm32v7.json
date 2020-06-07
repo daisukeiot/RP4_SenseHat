@@ -63,8 +63,8 @@
       "properties.desired": {
         "schemaVersion": "1.0",
         "routes": {
-          "SenseHatToIoTHub": "FROM /messages/modules/SenseHat/outputs/SensorsOutput INTO BrokeredEndpoint(\"/modules/FilterModule/inputs/TelemetryInput\")",
-          "FilterModuleToIoTHub": "FROM /messages/modules/FilterModule/outputs/TelemetryOutput/* INTO $upstream"
+          "SenseHatToFilter": "FROM /messages/modules/SenseHat/outputs/SensorsOutput INTO BrokeredEndpoint(\"/modules/FilterModule/inputs/TelemetryInput\")",
+          "FilterModuleToCloud": "FROM /messages/modules/FilterModule/outputs/TelemetryOutput/* INTO $upstream"
         },
         "storeAndForwardConfiguration": {
           "timeToLiveSecs": 7200
