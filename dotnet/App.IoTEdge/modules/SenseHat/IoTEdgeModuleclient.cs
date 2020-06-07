@@ -64,15 +64,17 @@ namespace RP4SenseHat.csharp
             if (twin.Properties.Desired.Contains("isCelsius"))
             {
                 _bCelsius = twin.Properties.Desired["isCelsius"];
+
+                // update reported properties to keep UI and device state in synch
                 TwinCollection twinValue = new TwinCollection();
                 twinValue["desiredVersion"] = twin.Properties.Desired["$version"];
                 twinValue["statusCode"] = 200;
+                twinValue["value"] = _bCelsius;
 
                 TwinCollection reportedProperties = new TwinCollection();
                 reportedProperties["isCelsius"] = twinValue;
 
                 await _client.UpdateReportedPropertiesAsync(reportedProperties).ConfigureAwait(false);
-
             }
 
             if (_hasSenseHat)
@@ -205,25 +207,21 @@ namespace RP4SenseHat.csharp
 
                 TwinCollection twinValue = new TwinCollection();
 
-                // desiredVersion and statusCode are required for IoT Central to ack "synch state"
+                // update reported properties to keep UI and device state in synch
+                twinValue["value"] = _bCelsius;
                 twinValue["desiredVersion"] = desiredProperties["$version"];
                 twinValue["statusCode"] = 200;
-                //twinValue["status"] = "completed";
 
                 TwinCollection reportedProperties = new TwinCollection();
                 reportedProperties["isCelsius"] = twinValue;
 
-                // Set reported properties to inform IoT Central the synchronization state
-                Console.WriteLine($"{reportedProperties.ToJson(Newtonsoft.Json.Formatting.Indented)}");
                 await _client.UpdateReportedPropertiesAsync(reportedProperties).ConfigureAwait(false);
             }
         }
 
         internal class SimulatorData
         {
-            public double TempCMin { get; set; }
             public double TempCMax { get; set; }
-            public double HumidityMin { get; set; }
             public double HumidityMax { get; set; }
             public double TempC { get; set; }
             public double Humidity { get; set; }
