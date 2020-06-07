@@ -1,0 +1,106 @@
+{
+    "@id": "urn:smartAgMonitor:DotnetSample_4sv:1",
+    "@type": "CapabilityModel",
+    "implements": [
+      {
+        "@id": "urn:smartAgMonitor:DotnetSample_4sv:kcs6jf8vb:1",
+        "@type": "InterfaceInstance",
+        "displayName": {
+          "en": "Interface"
+        },
+        "name": "DotnetSample_5pt",
+        "schema": {
+          "@id": "urn:smartAgMonitor:DotnetSample_5pt:1",
+          "@type": "Interface",
+          "displayName": {
+            "en": "Interface"
+          },
+          "contents": [
+            {
+              "@id": "urn:smartAgMonitor:DotnetSample_5pt:tempC:1",
+              "@type": [
+                "Telemetry",
+                "SemanticType/Temperature"
+              ],
+              "displayName": {
+                "en": "Temperature (Celsius)"
+              },
+              "name": "tempC",
+              "displayUnit": {
+                "en": "C"
+              },
+              "schema": "double",
+              "unit": "Units/Temperature/celsius"
+            },
+            {
+              "@id": "urn:smartAgMonitor:DotnetSample_5pt:tempF:1",
+              "@type": [
+                "Telemetry",
+                "SemanticType/Temperature"
+              ],
+              "displayName": {
+                "en": "Temperature (Fahrenheit)"
+              },
+              "name": "tempF",
+              "displayUnit": {
+                "en": "F"
+              },
+              "schema": "double",
+              "unit": "Units/Temperature/fahrenheit"
+            },
+            {
+              "@id": "urn:smartAgMonitor:DotnetSample_5pt:humidity:1",
+              "@type": [
+                "Telemetry",
+                "SemanticType/Humidity"
+              ],
+              "displayName": {
+                "en": "Humidity"
+              },
+              "name": "humidity",
+              "displayUnit": {
+                "en": "%"
+              },
+              "schema": "double",
+              "unit": "Units/Humidity/percent"
+            },
+            {
+              "@id": "urn:smartAgMonitor:DotnetSample_5pt:displayMessage:1",
+              "@type": "Command",
+              "commandType": "synchronous",
+              "durable": false,
+              "request": {
+                "@id": "urn:smartAgMonitor:DotnetSample_5pt:displayMessage:msg:1",
+                "@type": "SchemaField",
+                "displayName": {
+                  "en": "Message"
+                },
+                "name": "msg",
+                "schema": "string"
+              },
+              "displayName": {
+                "en": "Display Message"
+              },
+              "name": "displayMessage"
+            },
+            {
+              "@id": "urn:smartAgMonitor:DotnetSample_5pt:isCelsius:1",
+              "@type": "Property",
+              "displayName": {
+                "en": "Celsius / Fahrenheit"
+              },
+              "name": "isCelsius",
+              "writable": true,
+              "schema": "boolean"
+            }
+          ]
+        }
+      }
+    ],
+    "displayName": {
+      "en": "DotnetSample"
+    },
+    "@context": [
+      "http://azureiot.com/v1/contexts/IoTModel.json"
+    ]
+  }
