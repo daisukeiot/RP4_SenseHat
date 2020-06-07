@@ -21,7 +21,7 @@ namespace RP4SenseHat.csharp
         // https://docs.microsoft.com/en-us/dotnet/api/microsoft.azure.devices.client.moduleclient?view=azure-dotnet
         private ModuleClient _client;
         private bool _bCelsius = true;
-        private bool _hasSenseHat = false;
+        private bool _hasSenseHat = true;
         static readonly Random Rnd = new Random();
 
         public IoTEdgeModuleClient()
