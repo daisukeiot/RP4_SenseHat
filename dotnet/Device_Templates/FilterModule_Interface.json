@@ -1,0 +1,51 @@
+{
+  "@id": "urn:smartAgMonitor:DotnetSampleIoTEdge_214:1",
+  "@type": "Interface",
+  "displayName": {
+    "en": "Interface"
+  },
+  "contents": [
+    {
+      "@id": "urn:smartAgMonitor:DotnetSampleIoTEdge_214:tempC:1",
+      "@type": [
+        "Telemetry",
+        "SemanticType/Temperature"
+      ],
+      "displayName": {
+        "en": "Temperature (C)"
+      },
+      "name": "tempC",
+      "schema": "double",
+      "unit": "Units/Temperature/celsius"
+    },
+    {
+      "@id": "urn:smartAgMonitor:DotnetSampleIoTEdge_214:tempF:1",
+      "@type": [
+        "Telemetry",
+        "SemanticType/Temperature"
+      ],
+      "displayName": {
+        "en": "Temperature (F)"
+      },
+      "name": "tempF",
+      "schema": "double",
+      "unit": "Units/Temperature/fahrenheit"
+    },
+    {
+      "@id": "urn:smartAgMonitor:DotnetSampleIoTEdge_214:humidity:1",
+      "@type": [
+        "Telemetry",
+        "SemanticType/Humidity"
+      ],
+      "displayName": {
+        "en": "Humidity"
+      },
+      "name": "humidity",
+      "schema": "double",
+      "unit": "Units/Humidity/percent"
+    }
+  ],
+  "@context": [
+    "http://azureiot.com/v1/contexts/IoTModel.json"
+  ]
+}

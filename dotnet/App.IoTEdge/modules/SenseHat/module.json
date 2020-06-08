@@ -4,7 +4,7 @@
     "image": {
         "repository": "$CONTAINER_REGISTRY_URL/sensehat",
         "tag": {
-            "version": "$MODULE_VERSION",
+            "version": "$SENSEHAT_MODULE_VERSION",
             "platforms": {
                 "arm32v7": "./Dockerfile.arm32v7"
             }

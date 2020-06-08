@@ -20,13 +20,13 @@ namespace RP4SenseHat.csharp
         //
         // https://docs.microsoft.com/en-us/dotnet/api/microsoft.azure.devices.client.moduleclient?view=azure-dotnet
         private ModuleClient _client;
-        private bool _bCelcius = true;
-        private bool _hasSenseHat = false;
+        private bool _bCelsius = true;
+        private bool _hasSenseHat = true;
         static readonly Random Rnd = new Random();
 
         public IoTEdgeModuleClient()
         {
-            _bCelcius = true;
+            _bCelsius = true;
             Console.WriteLine($"SenseHat Module Client : Has SenseHat : {_hasSenseHat}");
         }
 
@@ -61,9 +61,20 @@ namespace RP4SenseHat.csharp
             Console.WriteLine("\r\nDevice Twin received:");
             Console.WriteLine($"{twin.ToJson(Newtonsoft.Json.Formatting.Indented)}");
 
-            if (twin.Properties.Desired.Contains("isCelcius"))
+            if (twin.Properties.Desired.Contains("isCelsius"))
             {
-                _bCelcius = twin.Properties.Desired["isCelcius"]["value"];
+                _bCelsius = twin.Properties.Desired["isCelsius"];
+
+                // update reported properties to keep UI and device state in synch
+                TwinCollection twinValue = new TwinCollection();
+                twinValue["desiredVersion"] = twin.Properties.Desired["$version"];
+                twinValue["statusCode"] = 200;
+                twinValue["value"] = _bCelsius;
+
+                TwinCollection reportedProperties = new TwinCollection();
+                reportedProperties["isCelsius"] = twinValue;
+
+                await _client.UpdateReportedPropertiesAsync(reportedProperties).ConfigureAwait(false);
             }
 
             if (_hasSenseHat)
@@ -83,7 +94,7 @@ namespace RP4SenseHat.csharp
                         {
                             string buffer;
                             // format telemetry based on settings from Cloud
-                            if (_bCelcius)
+                            if (_bCelsius)
                             {
                                 buffer = $"{{\"humidity\":{humidityReadResult.Humidity:F2},\"tempC\":{humidityReadResult.Temperatur:F2}}}";
                             } else
@@ -138,7 +149,7 @@ namespace RP4SenseHat.csharp
                     }
 
                     // format telemetry based on settings from Cloud
-                    if (_bCelcius)
+                    if (_bCelsius)
                     {
                         buffer = $"{{\"humidity\":{simulatorData.Humidity:F2},\"tempC\":{simulatorData.TempC:F2}}}";
                     } else
@@ -178,6 +189,7 @@ namespace RP4SenseHat.csharp
             {
                 Sense.Led.LedMatrix.ShowMessage(methodRequest.DataAsJson.Replace("\"", string.Empty).Trim());
             }
+
             // return response to IoT Hub/IoT Central
             return Task.FromResult(new MethodResponse(new byte[0], 200));
         }
@@ -188,27 +200,28 @@ namespace RP4SenseHat.csharp
             Console.WriteLine("\r\nDesired property (Settings) changed:");
             Console.WriteLine($"{desiredProperties.ToJson(Newtonsoft.Json.Formatting.Indented)}");
 
-
             // IoT Central expects the following payloads in Reported Property (as a response and communicate synchronization status) 
-            _bCelcius = desiredProperties["isCelcius"]["value"];
+            if (desiredProperties.Contains("isCelsius"))
+            {
+                _bCelsius = desiredProperties["isCelsius"];
 
-            TwinCollection twinValue = new TwinCollection();
-            twinValue["value"] = _bCelcius;
-            twinValue["desiredVersion"] = desiredProperties["$version"];
-            twinValue["statusCode"] = 200;
-            twinValue["status"] = "completed";
+                TwinCollection twinValue = new TwinCollection();
 
-            TwinCollection reportedProperties = new TwinCollection();
-            reportedProperties["isCelcius"] = twinValue;
+                // update reported properties to keep UI and device state in synch
+                twinValue["value"] = _bCelsius;
+                twinValue["desiredVersion"] = desiredProperties["$version"];
+                twinValue["statusCode"] = 200;
 
-            await _client.UpdateReportedPropertiesAsync(reportedProperties).ConfigureAwait(false);
+                TwinCollection reportedProperties = new TwinCollection();
+                reportedProperties["isCelsius"] = twinValue;
+
+                await _client.UpdateReportedPropertiesAsync(reportedProperties).ConfigureAwait(false);
+            }
         }
 
         internal class SimulatorData
         {
-            public double TempCMin { get; set; }
             public double TempCMax { get; set; }
-            public double HumidityMin { get; set; }
             public double HumidityMax { get; set; }
             public double TempC { get; set; }
             public double Humidity { get; set; }
