@@ -1,12 +1,13 @@
 # Setting up IoT Edge with IoT Central Application
 
-Example of setting Azure IoT Edge module in IoT Central app.
+Example of setting up Azure IoT Edge module in IoT Central app
 
 ## Requirements
 
-1. Azure IoT Central Preview Application
-1. Raspberry Pi 3/4
-1. Optional : [SenseHat](https://www.raspberrypi.org/products/sense-hat/)
+- Azure Subscription
+- Azure IoT Central Preview Application
+- Raspberry Pi 3 or 4
+- Optional : [SenseHat](https://www.raspberrypi.org/products/sense-hat/)
 
 ## Assumption
 
@@ -14,7 +15,7 @@ This instruction assumes followings :
 
 - The repo is cloned into `C:\RP4_SenseHat`
 - SenseHat is available  
-    If you do not have SenseHat, please use Simulator version
+    If you do not have SenseHat, please use Simulator version by setting `_hasSenseHat` to false in `dotnet/App.IoTEdge/modules/SenseHat/IoTEdgeModuleclient.cs`
 
 ## Azure IoT Edge Modules
 
@@ -169,20 +170,24 @@ We need to add followings :
 
 SenseHat module generates telemetry messages every 3 seconds in the following format :
 
+When module twin `isCelsius` is set to **true** :
+
 ```json
 {"humidity":26.65,"tempC":39.91}
 ```
 
 or
 
+When module twin `isCelsius` is set to **false** :
+
 ```json
-{"humidity":26.65,"tempF":39.91}
+{"humidity":26.65,"tempF":103.84}
 ```
 
 Filter Module adds temperature telemetry in Fahrenheit or Celsius (whichever missing one), then sends telemetry messages in the following format :
 
 ```json
-{"humidity":26.65,"tempC":39.91,"tempF":39.91}
+{"humidity":26.65,"tempC":39.91,"tempF":103.84}
 ```
 
 These telemetry interfaces are not defined in the deployment template, therefore, we need to add them to the device template.
