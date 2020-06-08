@@ -2,9 +2,25 @@
 
 Example of setting Azure IoT Edge module in IoT Central app.
 
-There are two modules :
+## Requirements
 
-## SenseHat Module
+1. Azure IoT Central Preview Application
+1. Raspberry Pi 3/4
+1. Optional : [SenseHat](https://www.raspberrypi.org/products/sense-hat/)
+
+## Assumption
+
+This instruction assumes followings :
+
+- The repo is cloned into `C:\RP4_SenseHat`
+- SenseHat is available  
+    If you do not have SenseHat, please use Simulator version
+
+## Azure IoT Edge Modules
+
+Two Azure IoT Edge Modules are used for this sample
+
+### SenseHat Module
 
 - Reads sensor data from SenseHat
 - Sends telemetry with Temperature and Humidity
@@ -17,7 +33,7 @@ Example of Telemetry from SenseHat Module
 Message Out : {"humidity":29.28,"tempF":95.80}
 ```
 
-## Filter Module
+### Filter Module
 
 This is an example of intercepting messages and process telemetry data
 
@@ -39,19 +55,28 @@ Message Out : {"humidity":29.47,"tempC":35.48,"tempF":95.87}
 
     Telemetry to Cloud (IoT Central)
 
-## Requirements
+## Message Routes
 
-1. Azure IoT Central Preview Application
-1. Raspberry Pi 3/4
-1. Optional : SenseHat
+Telemetry Message Routes are defined in `deployment.arm32v7.json` in **dotnet/App.IoTEdge/config** as follows :
 
-## Assumption
+```json
+    "$edgeHub": {
+      "properties.desired": {
+        "schemaVersion": "1.0",
+        "routes": {
+          "SenseHatToFilter": "FROM /messages/modules/SenseHat/outputs/SensorsOutput INTO BrokeredEndpoint(\"/modules/FilterModule/inputs/TelemetryInput\")",
+          "FilterModuleToCloud": "FROM /messages/modules/FilterModule/outputs/TelemetryOutput/* INTO $upstream"
+        },
+```
 
-This instruction assumes followings :
+1. SenseHat module reads sensor data every 3 seconds
+1. SenseHat module creates a message with **Temperature** and **Humidity**
+1. SenseHat module sends the message through **SenseorOutput**
+1. FilterModule receives the message through **TelemetryInput**
+1. FilterModule processes the message
+1. FilterModule sends the message to IoT Hub through **TelemetryOutput**
 
-- The repo is cloned to `C:\RP4_SenseHat`
-- SenseHat is available  
-    If you do not have SenseHat, please use Simulator version
+![Message](media/TelemetryFlow.png)
 
 ## Setting Up Raspberry Pi
 
@@ -97,7 +122,7 @@ Ensure you use "Preview Application" (As of June 2020).
 
 ## Creating a new device template with Deployment Manifest
 
-1. Select **Device templates**, then click "+ New"
+1. Select **Device templates**, then click `+ New`
 
     ![IoTC01](media/IoTC_Edge_01.png)
 
