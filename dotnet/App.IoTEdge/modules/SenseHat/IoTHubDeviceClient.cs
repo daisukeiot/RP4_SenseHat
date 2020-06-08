@@ -38,7 +38,7 @@ namespace RP4SenseHat.csharp
 
         public async Task Initialize()
         {
-            MqttTransportSettings mqttSetting = new MqttTransportSettings(TransportType.Mqtt)
+            MqttTransportSettings mqttSetting = new MqttTransportSettings(TransportType.Mqtt_Tcp_Only)
             {
                 //CleanSession = true,
                 // set proxy etc
