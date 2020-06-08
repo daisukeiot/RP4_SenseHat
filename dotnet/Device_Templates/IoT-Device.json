@@ -1,0 +1,97 @@
+{
+  "@id": "urn:iotEdgeSample:IoTDevice_2i:1",
+  "@type": "CapabilityModel",
+  "implements": [
+    {
+      "@id": "urn:iotEdgeSample:IoTDevice_2i:nerwszhhn:1",
+      "@type": "InterfaceInstance",
+      "displayName": {
+        "en": "TelemetryInterface"
+      },
+      "name": "IoTDevice",
+      "schema": {
+        "@id": "urn:IoTCentral_DeviceClient:IoTDeviceClient:1",
+        "@type": "Interface",
+        "displayName": {
+          "en": "TelemetryInterface"
+        },
+        "contents": [
+          {
+            "@id": "urn:IoTCentral_DeviceClient:IoTDeviceClient:tempC:1",
+            "@type": [
+              "Telemetry",
+              "SemanticType/Temperature"
+            ],
+            "displayName": {
+              "en": "Temperature (C)"
+            },
+            "name": "tempC",
+            "schema": "double",
+            "unit": "Units/Temperature/celsius"
+          },
+          {
+            "@id": "urn:IoTCentral_DeviceClient:IoTDeviceClient:tempF:1",
+            "@type": [
+              "Telemetry",
+              "SemanticType/Temperature"
+            ],
+            "displayName": {
+              "en": "Temperature (F)"
+            },
+            "name": "tempF",
+            "schema": "double",
+            "unit": "Units/Temperature/fahrenheit"
+          },
+          {
+            "@id": "urn:IoTCentral_DeviceClient:IoTDeviceClient:humidity:1",
+            "@type": [
+              "Telemetry",
+              "SemanticType/Humidity"
+            ],
+            "displayName": {
+              "en": "Humidity"
+            },
+            "name": "humidity",
+            "schema": "double",
+            "unit": "Units/Humidity/percent"
+          },
+          {
+            "@id": "urn:IoTCentral_DeviceClient:IoTDeviceClient:isCelsius:1",
+            "@type": "Property",
+            "displayName": {
+              "en": "Temperature Unit"
+            },
+            "name": "isCelsius",
+            "writable": true,
+            "schema": "boolean"
+          },
+          {
+            "@id": "urn:IoTCentral_DeviceClient:IoTDeviceClient:displayMessage:1",
+            "@type": "Command",
+            "commandType": "synchronous",
+            "durable": false,
+            "request": {
+              "@id": "urn:IoTCentral_DeviceClient:IoTDeviceClient:displayMessage:message:1",
+              "@type": "SchemaField",
+              "displayName": {
+                "en": "Message"
+              },
+              "name": "message",
+              "schema": "string"
+            },
+            "displayName": {
+              "en": "Display Message"
+            },
+            "name": "displayMessage"
+          }
+        ]
+      }
+    }
+  ],
+  "displayName": {
+    "en": "IoT-Device"
+  },
+  "@context": [
+    "http://azureiot.com/v1/contexts/IoTModel.json"
+  ]
+}
