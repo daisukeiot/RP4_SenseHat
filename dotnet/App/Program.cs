@@ -14,7 +14,7 @@ namespace RP4SenseHat.csharp
         // 3. Calls IoT Hub Client Class instance to run the loop
         //
 
-        private static string s_deviceId = "SenseHatDeviceApp";
+        private static string s_deviceId = "RaspberryPi4SenseHat";
 
         public static int Main(string[] args)
         {
