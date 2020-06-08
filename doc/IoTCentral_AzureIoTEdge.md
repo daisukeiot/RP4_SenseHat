@@ -126,26 +126,26 @@ Ensure you use "Preview Application" (As of June 2020).
 
     ![IoTC01](media/IoTC_Edge_01.png)
 
-1. Select **Azure IoT Edge** tile and click **Next: Customize**
+1. Select **Azure IoT Edge** tile and click `Next: Customize`
 
     ![IoTC02](media/IoTC_Edge_02.png)
 
 1. Give a name to the new template (e.g. IoTEdge-Device)
 
-1. Click **Browse**
+1. Click `Browse`
 
     ![IoTC03](media/IoTC_Edge_03.png)
 
-1. Browse to `deployment.arm32v7.json` file  
+1. Browse to **deployment.arm32v7.json** file  
 
     - With SenseHat, `C:\RP4_SenseHat\dotnet\App.IoTEdge\config\SenseHat`
     - Without SenseHat, `C:\RP4_SenseHat\dotnet\App.IoTEdge\config\Simulation`
 
-1. Click **Next: Review**
+1. Click `Next: Review`
 
     ![IoTC04](media/IoTC_Edge_04.png)
 
-1. Click **Create**
+1. Click `Create`
 
     ![IoTC05](media/IoTC_Edge_05.png)
 
@@ -185,20 +185,6 @@ Filter Module adds temperature telemetry in Fahrenheit or Celsius (whichever mis
 {"humidity":26.65,"tempC":39.91,"tempF":39.91}
 ```
 
-Cloud (IoT Central) receives telemetry messages from Filter Module, which is defined in deployment manifest as follows :
-
-```json
-
-    "$edgeHub": {
-      "properties.desired": {
-        "schemaVersion": "1.0",
-        "routes": {
-          "SenseHatToFilter": "FROM /messages/modules/SenseHat/outputs/SensorsOutput INTO BrokeredEndpoint(\"/modules/FilterModule/inputs/TelemetryInput\")",
-          "FilterModuleToCloud": "FROM /messages/modules/FilterModule/outputs/TelemetryOutput/* INTO $upstream"
-        },
-
-```
-
 These telemetry interfaces are not defined in the deployment template, therefore, we need to add them to the device template.
 
 ## Adding Telemetry Interfaces
@@ -211,11 +197,11 @@ Since telemetry messages are received from **FilterModule**, we need to add tele
 
     ![IoTC08](media/IoTC_Edge_08.png)
 
-1. Click **Custom**
+1. Click `Custom`
 
     ![IoTC09](media/IoTC_Edge_09.png)
 
-1. Click **+ Add capability**
+1. Click `+ Add capability`
 
     ![IoTC10](media/IoTC_Edge_10.png)
 
@@ -232,7 +218,7 @@ Since telemetry messages are received from **FilterModule**, we need to add tele
     > [!TIP]
     > You can create the interface by importing the exported template in `C:\RP4_SenseHat\dotnet\Device_Templates\FilterModule_Interface.json`
 
-1. Click **Save**
+1. Click `Save`
 
     You should see new **interface** under **Module FilterModule**
 
@@ -266,7 +252,7 @@ In order to send the collect data to the device, ensure the schema for **isCelsi
     > [!IMPORTANT]
     > Make sure **Name** stays as `isCelsius` (case sensitive)
 
-1. Click **Save** to save the change
+1. Click `Save` to save the change
 
     ![IoTC15](media/IoTC_Edge_15.png)
 
@@ -293,7 +279,7 @@ The device template has no views by default.  Since we are expecting to receive 
 
     ![IoTC19](media/IoTC_Edge_19.png)
 
-1. Click **Save** to save the change
+1. Click `Save` to save the change
 
 ## Adding Command capability
 
@@ -317,17 +303,17 @@ SenseHat module is capable of receiving a command from cloud.  The  **displayMes
     
     ![IoTC33](media/IoTC_Edge_34.png)
 
-1. Click **Save** to save the change
+1. Click `Save` to save the change
 
 ## Publishing the device template
 
 The device template you created is in a draft state.  In order to use this device template to connect devices, the device template must be published.
 
-1. Click **Publish** to publish the device template
+1. Click `Publish` to publish the device template
 
     ![IoTC20](media/IoTC_Edge_20.png)
 
-1. Click **Publish** to confirm
+1. Click `Publish` to confirm
 
     ![IoTC21](media/IoTC_Edge_21.png)
 
@@ -338,7 +324,7 @@ Now the device template is ready to add devices
 In order to connect a device, a new device identity needs to be created.  Each device identity must be associated with a device template.
 
 1. Browse to **Devices** page
-1. Click **+ New** to add a new device identity
+1. Click `+ New` to add a new device identity
 
     You should see the device template you published
 
@@ -355,7 +341,7 @@ In order to connect a device, a new device identity needs to be created.  Each d
 
     ![IoTC23](media/IoTC_Edge_23.png)
 
-1. Click **Create** to create a new device identity
+1. Click `Create` to create a new device identity
 
 1. The new device identity should be listed as follows :
 
@@ -465,7 +451,7 @@ The module twin setting **isCelsius** can be set via cloud.  The setting can be 
     docker logs -f FilterModule
     ```
 
-1. Change setting of **Report in Celsius** in **Manage** tab, then click **Save**
+1. Change setting of **Report in Celsius** in **Manage** tab, then click `Save`
 
     You should see the change is received by SenseHat module and the telemetry change from tempC to tempF (or vice versa)
 
@@ -473,7 +459,7 @@ The module twin setting **isCelsius** can be set via cloud.  The setting can be 
 
 ### Comamand
 
-Under **Commands** tab, type any test in **Message Text** field then click **Run**
+Under **Commands** tab, type any test in **Message Text** field then click `Run`
 
 ![IoTC35](media/IoTC_Edge_35.png)
 
