@@ -1,5 +1,4 @@
 {
-  "$schema-template": "2.0.0",
   "modulesContent": {
     "$edgeAgent": {
       "properties.desired": {
@@ -8,14 +7,7 @@
           "type": "docker",
           "settings": {
             "minDockerVersion": "v1.25",
-            "loggingOptions": "",
-            "registryCredentials": {
-              "docker": {
-                "username": "$CONTAINER_REGISTRY_USERNAME",
-                "password": "$CONTAINER_REGISTRY_PASSWORD",
-                "address": "docker.io"
-              }
-            }
+            "loggingOptions": ""
           }
         },
         "systemModules": {
@@ -23,7 +15,7 @@
             "type": "docker",
             "settings": {
               "image": "mcr.microsoft.com/azureiotedge-agent:1.0",
-              "createOptions": {}
+              "createOptions": "{}"
             }
           },
           "edgeHub": {
@@ -32,27 +24,7 @@
             "restartPolicy": "always",
             "settings": {
               "image": "mcr.microsoft.com/azureiotedge-hub:1.0",
-              "createOptions": {
-                "HostConfig": {
-                  "PortBindings": {
-                    "5671/tcp": [
-                      {
-                        "HostPort": "5671"
-                      }
-                    ],
-                    "8883/tcp": [
-                      {
-                        "HostPort": "8883"
-                      }
-                    ],
-                    "443/tcp": [
-                      {
-                        "HostPort": "443"
-                      }
-                    ]
-                  }
-                }
-              }
+              "createOptions": "{\"HostConfig\":{\"PortBindings\":{\"5671/tcp\":[{\"HostPort\":\"5671\"}],\"8883/tcp\":[{\"HostPort\":\"8883\"}],\"443/tcp\":[{\"HostPort\":\"443\"}]}}}"
             }
           }
         },
@@ -63,24 +35,8 @@
             "status": "running",
             "restartPolicy": "always",
             "settings": {
-              "image": "${MODULES.SenseHat}",
-              "createOptions": {
-                "HostConfig": {
-                  "Privileged": true
-                },
-                "Devices": [
-                  {
-                    "PathOnHost": "/dev",
-                    "PathInContainer": "/dev",
-                    "CgroupPermissions": "rwm"
-                  },
-                  {
-                    "PathOnHost": "/sys/class/input",
-                    "PathInContainer": "/sys/class/input",
-                    "CgroupPermissions": "rwm"
-                  }
-                ]
-              }
+              "image": "daisukeiot/sensehat:1.0.0-sim-arm32v7",
+              "createOptions": "{\"HostConfig\":{\"Privileged\":true},\"Devices\":[{\"PathOnHost\":\"/dev\",\"PathInContainer\":\"/dev\",\"CgroupPermissions\":\"rwm\"},{\"PathOnHost\":\"/sys/class/input\",\"PathInContainer\":\"/sys/class/input\",\"CgroupPermissions\":\"rwm\"}]}"
             }
           },
           "FilterModule": {
@@ -89,8 +45,8 @@
             "status": "running",
             "restartPolicy": "always",
             "settings": {
-              "image": "${MODULES.FilterModule}",
-              "createOptions": {}
+              "image": "daisukeiot/filtermodule:1.0.0-arm32v7",
+              "createOptions": "{}"
             }
           }
         }

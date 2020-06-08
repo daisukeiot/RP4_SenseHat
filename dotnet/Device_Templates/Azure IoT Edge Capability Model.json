@@ -1,0 +1,164 @@
+{
+  "@id": "urn:seg49ypi2:capabilitymodel:liw_kyx55c:1",
+  "@type": "CapabilityModel",
+  "implements": [],
+  "displayName": {
+    "en": "Azure IoT Edge Capability Model liw_kyx55c"
+  },
+  "contents": [
+    {
+      "@id": "urn:seg49ypi2:capabilitymodel:liw_kyx55c:SenseHat:1",
+      "@type": [
+        "Relationship",
+        "SemanticType/EdgeModule"
+      ],
+      "displayName": {
+        "en": "SenseHat"
+      },
+      "name": "SenseHat",
+      "maxMultiplicity": 1,
+      "target": [
+        {
+          "@id": "urn:seg49ypi2:SenseHat:1",
+          "@type": "CapabilityModel",
+          "implements": [
+            {
+              "@id": "urn:seg49ypi2:SenseHat:_ozaf4fzen:1",
+              "@type": "InterfaceInstance",
+              "displayName": {
+                "en": "Manage"
+              },
+              "name": "manage",
+              "schema": {
+                "@id": "urn:seg49ypi2:SenseHat:manage:1",
+                "@type": "Interface",
+                "displayName": {
+                  "en": "Manage"
+                },
+                "contents": [
+                  {
+                    "@id": "urn:seg49ypi2:SenseHat:manage:isCelsius:1",
+                    "@type": "Property",
+                    "displayName": {
+                      "en": "Report in Celsius"
+                    },
+                    "name": "isCelsius",
+                    "writable": true,
+                    "schema": "boolean"
+                  },
+                  {
+                    "@id": "urn:seg49ypi2:SenseHat:manage:displayMessage:1",
+                    "@type": "Command",
+                    "commandType": "synchronous",
+                    "durable": false,
+                    "request": {
+                      "@id": "urn:seg49ypi2:SenseHat:manage:displayMessage:MessageText:1",
+                      "@type": "SchemaField",
+                      "displayName": {
+                        "en": "Message Text"
+                      },
+                      "name": "MessageText",
+                      "schema": "string"
+                    },
+                    "displayName": {
+                      "en": "Display Message"
+                    },
+                    "name": "displayMessage"
+                  }
+                ]
+              }
+            }
+          ],
+          "displayName": {
+            "en": "Module SenseHat"
+          },
+          "@context": [
+            "http://azureiot.com/v1/contexts/IoTModel.json"
+          ]
+        }
+      ]
+    },
+    {
+      "@id": "urn:seg49ypi2:capabilitymodel:liw_kyx55c:FilterModule:1",
+      "@type": [
+        "Relationship",
+        "SemanticType/EdgeModule"
+      ],
+      "displayName": {
+        "en": "FilterModule"
+      },
+      "name": "FilterModule",
+      "maxMultiplicity": 1,
+      "target": [
+        {
+          "@id": "urn:seg49ypi2:FilterModule:1",
+          "@type": "CapabilityModel",
+          "implements": [
+            {
+              "@id": "urn:seg49ypi2:FilterModule:ncijokcnp:1",
+              "@type": "InterfaceInstance",
+              "name": "Interface_45t",
+              "schema": {
+                "@id": "urn:smartAgMonitor:DotnetSampleIoTEdge_214:1",
+                "@type": "Interface",
+                "displayName": {
+                  "en": "Interface"
+                },
+                "contents": [
+                  {
+                    "@id": "urn:smartAgMonitor:DotnetSampleIoTEdge_214:tempC:1",
+                    "@type": [
+                      "Telemetry",
+                      "SemanticType/Temperature"
+                    ],
+                    "displayName": {
+                      "en": "Temperature (C)"
+                    },
+                    "name": "tempC",
+                    "schema": "double",
+                    "unit": "Units/Temperature/celsius"
+                  },
+                  {
+                    "@id": "urn:smartAgMonitor:DotnetSampleIoTEdge_214:tempF:1",
+                    "@type": [
+                      "Telemetry",
+                      "SemanticType/Temperature"
+                    ],
+                    "displayName": {
+                      "en": "Temperature (F)"
+                    },
+                    "name": "tempF",
+                    "schema": "double",
+                    "unit": "Units/Temperature/fahrenheit"
+                  },
+                  {
+                    "@id": "urn:smartAgMonitor:DotnetSampleIoTEdge_214:humidity:1",
+                    "@type": [
+                      "Telemetry",
+                      "SemanticType/Humidity"
+                    ],
+                    "displayName": {
+                      "en": "Humidity"
+                    },
+                    "name": "humidity",
+                    "schema": "double",
+                    "unit": "Units/Humidity/percent"
+                  }
+                ]
+              }
+            }
+          ],
+          "displayName": {
+            "en": "Module FilterModule"
+          },
+          "@context": [
+            "http://azureiot.com/v1/contexts/IoTModel.json"
+          ]
+        }
+      ]
+    }
+  ],
+  "@context": [
+    "http://azureiot.com/v1/contexts/IoTModel.json"
+  ]
+}

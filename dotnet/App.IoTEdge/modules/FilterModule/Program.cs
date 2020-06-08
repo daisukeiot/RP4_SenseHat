@@ -100,9 +100,9 @@ namespace FilterModule
                 else if (messageIn.tempC == 0)
                 {
                     // add Fahrenheit
-                    double celcius = (messageIn.tempF - 32) * 5 / 9;
+                    double celsius = (messageIn.tempF - 32) * 5 / 9;
 
-                    s_MessageOut = $"{{\"humidity\":{messageIn.humidity:F2},\"tempC\":{celcius:F2},\"tempF\":{messageIn.tempF:F2}}}";
+                    s_MessageOut = $"{{\"humidity\":{messageIn.humidity:F2},\"tempC\":{celsius:F2},\"tempF\":{messageIn.tempF:F2}}}";
                 }
 
                 using (var telemetryMessage = new Message(Encoding.UTF8.GetBytes(s_MessageOut)))
