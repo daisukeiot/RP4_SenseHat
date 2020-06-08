@@ -332,12 +332,12 @@ In order to connect a device, a new device identity needs to be created.  Each d
 
 1. Create a new device identity with following settings :
 
-    |Setting               |Value    |Note  |
-    |----------------------|---------|---------|
-    |Template Type         |IoT Edge Device template just created |         |
-    |Device Name           |User friendly device name for UI      |         |
-    |Device ID             |Unique ID for each device             |         |
-    |Simulate this device? | No | |
+    |Setting               |Value                                 |
+    |----------------------|--------------------------------------|
+    |Template Type         |IoT Edge Device template just created |
+    |Device Name           |User friendly device name for UI      |
+    |Device ID             |Unique ID for each device             |
+    |Simulate this device? |No                                    |
 
     ![IoTC23](media/IoTC_Edge_23.png)
 
@@ -399,7 +399,7 @@ In order for Azure IoT Edge to connect to IoT Hub/IoT Central, provisioning info
 
     Uncomment 8 lines by removing `#` and 1 space
 
-    > [!IMPORTANT]
+    > [!IMPORTANT]  
     > It is important to use right indention (2 paces) in yaml file
 
 1. Enter values from step above
@@ -412,10 +412,10 @@ In order for Azure IoT Edge to connect to IoT Hub/IoT Central, provisioning info
 
 1. Restart Azure IoT Edge for the change to be consumed with :
 
-```bash
-sudo systemctl restart iotedge
-```
-
+    ```bash
+    sudo systemctl restart iotedge
+    ```
+    
 1. Once Azure IoT Edge runtime restarts and connects to IoT Central application, status of the deivce should become **Provisioned** from **Registered**
 
     ![IoTC28](media/IoTC_Edge_28.png)
