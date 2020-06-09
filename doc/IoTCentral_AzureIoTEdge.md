@@ -97,8 +97,8 @@ If you have SenseHat, we need to enable I2C and SPI interfaces.
     sudo raspi-config nonint do_spi 0 && \
     sudo raspi-config nonint do_i2c 0 && \
     sudo raspi-config nonint do_wifi_country US && \
-    sudo raspi-config nonint do_change_locale en_US.UTF-8 && \
     sudo raspi-config nonint do_configure_keyboard us && \
+    sudo raspi-config nonint do_change_locale en_US.UTF-8 && \
     sudo raspi-config nonint do_change_timezone US/Pacific && \
     sudo reboot now
     ```
@@ -359,17 +359,17 @@ Your IoT Central application is now ready for devices to connect
 Install Docker and Azure IoT Edge runtime on Raspbian Buster with :
 
 ```bash
-sudo apt-get update && \
-sudo apt-get install libssl1.0.2 && \
-sudo apt-get install moby-engine && \
-sudo apt-get install moby-cli && \
+sudo apt-get -y install libssl1.0.2 && \
 curl https://packages.microsoft.com/config/debian/stretch/multiarch/prod.list > ./microsoft-prod.list && \
 sudo cp ./microsoft-prod.list /etc/apt/sources.list.d/ && \
 curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg && \
 sudo cp ./microsoft.gpg /etc/apt/trusted.gpg.d/ && \
-sudo apt-get update && \
+sudo apt-get -y update && \
+sudo apt-get -y install moby-engine && \
+sudo apt-get -y install moby-cli && \
+sudo apt-get -y update && \
 sudo apt-get -y install iotedge && \
-rm microsoft.*
+rm microsoft*.*
 ```
 
 For other platformns, please install Azure IoT Edge runtime on your device by following [the online instruction](https://docs.microsoft.com/en-us/azure/iot-edge/how-to-install-iot-edge-linux) 
