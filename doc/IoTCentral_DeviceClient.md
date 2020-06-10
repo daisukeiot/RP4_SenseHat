@@ -53,9 +53,9 @@ If you have SenseHat, we need to enable I2C and SPI interfaces.
     sudo raspi-config nonint do_memory_split 16 && \
     sudo raspi-config nonint do_spi 0 && \
     sudo raspi-config nonint do_i2c 0 && \
+    sudo raspi-config nonint do_configure_keyboard us && \
     sudo raspi-config nonint do_wifi_country US && \
     sudo raspi-config nonint do_change_locale en_US.UTF-8 && \
-    sudo raspi-config nonint do_configure_keyboard us && \
     sudo raspi-config nonint do_change_timezone US/Pacific && \
     sudo reboot now
     ```
